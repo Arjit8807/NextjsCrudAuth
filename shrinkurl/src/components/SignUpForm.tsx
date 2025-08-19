@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // <-- We import the useRouter hook
+// import { users } from '@/lib/db'; // Assuming this file exists and is correctly configured
+import Link from 'next/link';
+
 
 const SignUpForm = () => {
+    const router = useRouter(); // <-- We initialize the router
      const [email, setEmail] = useState('');
      const [password, setPassword] = useState('');
 
@@ -18,9 +23,7 @@ const SignUpForm = () => {
         try{
           const response = await fetch('/api/auth/signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json',},
          body: JSON.stringify({ email, password }),
       });
 
@@ -28,6 +31,7 @@ const SignUpForm = () => {
 
       if (response.ok) {
          setMessage(data.message);
+         router.push('/signin'); // <-- Redirect to the homepage on success
       } else {
         setMessage(data.message || 'Something went wrong. Please try again.');
       }
@@ -75,6 +79,11 @@ const SignUpForm = () => {
       </form>
       {/* This paragraph will display a message to the user, such as "Signing up..." or "Invalid credentials.". */}
       {message && <p className="mt-4 text-center text-sm text-gray-700">{message}</p>}
+     
+      <p className="mt-4 text-center text-sm text-gray-600">
+        Already have an account? 
+        <Link href="/signin" className="text-blue-600 hover:underline">Sign In</Link>
+      </p>
     </div>
   );
 };

@@ -1,35 +1,24 @@
-// import { NextResponse } from 'next/server';
 
-// export async function POST(request: Request) {
 
-//     const { email, password } = await request.json();
-
-//     console.log('Received signup request:', { email, password });
-
-//     return NextResponse.json({
-//     message: 'User signed up successfully!',
-//   }, { status: 201 });
-// }
-
-// src/app/api/auth/signup/route.ts
+// We import NextResponse to create and send a standardized response.
 import { NextResponse } from 'next/server';
 
-// This is a dummy 'database' to store our user's credentials.
-// In a real application, you would use a service like Firebase or MongoDB.
-const users = new Map();
+// We import the shared 'users' Map from our lib/db.ts file.
+import { users } from '@/lib/db';
 
+// This function handles incoming HTTP POST requests.
+// It's a backend function, not part of the frontend UI.
 export async function POST(request: Request) {
+  // We read the email and password from the request body.
   const { email, password } = await request.json();
 
+  // We check if the user already exists in our shared database.
   if (users.has(email)) {
-    // If the email already exists, return an error.
     return NextResponse.json({ message: 'User already exists.' }, { status: 409 });
   }
 
-  // Store the user's data in our temporary 'database'.
+  // We store the new user's data in the shared Map.
   users.set(email, { email, password });
-
-  console.log('New user signed up:', { email });
   
   return NextResponse.json({
     message: 'User signed up successfully!',

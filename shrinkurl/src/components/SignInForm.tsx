@@ -2,8 +2,13 @@
 
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // <-- We import the useRouter hook
+// import { users } from '@/lib/db'; // Assuming this file exists and is correctly configured
+
 
 const SignInForm=()=>{
+    const router = useRouter(); // <-- We initialize the router
+
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
 
@@ -27,6 +32,7 @@ const SignInForm=()=>{
 
           if(response.ok){
             setMessage(data.message);
+            router.push('/'); // <-- Redirect to the homepage on success
           }
           else{
             setMessage(data.message || 'Invalid credentials. Please try again.');
