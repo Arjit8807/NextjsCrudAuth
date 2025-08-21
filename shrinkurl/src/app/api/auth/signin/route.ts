@@ -1,31 +1,38 @@
-// src/app/api/auth/signin/route.ts
-
-// We import NextResponse to create and send a standardized response.
 import { NextResponse } from 'next/server';
-
-// We import the shared 'users' Map from our lib/db.ts file.
-import { users } from '@/lib/db';
-
-// This function handles incoming HTTP POST requests.
-// It's a backend function, not part of the frontend UI.
+import bcrypt from 'bcryptjs';
+import prisma from '@/lib/prisma';
 export async function POST(request: Request) {
-  // We read the email and password from the request body.
-  const { email, password } = await request.json();
+  try {
+    const { email, password } = await request.json();
 
-  // We check if the user exists in our shared database.
-  if (!users.has(email)) {
-    return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
+    // We find the user by their email in the database.
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    });
+
+    if (!user) {
+      // If no user is found, we return an "Invalid credentials" error.
+      return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
+    }
+
+    // We compare the password the user entered with the hashed password in the database.
+    const isPasswordCorrect = await bcrypt.compare(password, user.password_hash);
+
+    if (!isPasswordCorrect) {
+      // If the passwords don't match, we return an "Invalid credentials" error.
+      return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
+    }
+
+    return NextResponse.json({
+      message: 'User signed in successfully!',
+    });
+
+  } catch (error) {
+    console.error('Signin error:', error);
+    return NextResponse.json({
+      message: 'Failed to sign in.',
+    }, { status: 500 });
   }
-
-  // We get the user's data from our shared database.
-  const user = users.get(email);
-
-  // We check if the password matches the one in our database.
-  if (user.password !== password) {
-    return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
-  }
-
-  return NextResponse.json({
-    message: 'User signed in successfully!',
-  });
 }

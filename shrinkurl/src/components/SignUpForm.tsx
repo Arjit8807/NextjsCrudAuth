@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // <-- We import the useRouter hook
+// import { useRouter } from 'next/navigation'; // <-- We import the useRouter hook
 // import { users } from '@/lib/db'; // Assuming this file exists and is correctly configured
 import Link from 'next/link';
 
 
 const SignUpForm = () => {
-    const router = useRouter(); // <-- We initialize the router
+    // const router = useRouter(); // <-- We initialize the router
      const [email, setEmail] = useState('');
      const [password, setPassword] = useState('');
 
@@ -31,7 +31,7 @@ const SignUpForm = () => {
 
       if (response.ok) {
          setMessage(data.message);
-         router.push('/signin'); // <-- Redirect to the homepage on success
+        //  router.push('/signin'); // <-- Redirect to the homepage on success
       } else {
         setMessage(data.message || 'Something went wrong. Please try again.');
       }

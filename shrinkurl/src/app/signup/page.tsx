@@ -1,4 +1,4 @@
-// src/app/signup/page.tsx
+
 
 import React from 'react';
 import SignUpForm from '../../components/SignUpForm';

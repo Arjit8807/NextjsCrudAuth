@@ -1,15 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// prisma/schema.prisma
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-
+// This block defines the database provider (PostgreSQL) and tells Prisma where to find the connection URL.
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // Prisma reads this from your .env file
+}
+
+// This block generates the Prisma Client, which is the library we'll use in our code.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Our 'User' model, which creates a 'users' table in the database.
+model User {
+  id            String    @id @default(uuid())                              // A unique ID for each user, automatically generated.
+  email         String    @unique                                           // The user's email, which must be unique.
+  password_hash String                                                      // Stores the user's secure, hashed password.
+  createdAt     DateTime  @default(now())                                   // The timestamp when the user was created.
+  links         Link[]                                                      // A list of links created by this user.
+}
+
+// Our 'Link' model, which creates a 'links' table.
+model Link {
+  id        String    @id @default(uuid())      // A unique ID for each link.
+  shortUrl  String    @unique                   // The unique shortened URL string.
+  longUrl   String    @db.Text                  // The original URL, stored as a long string.
+  createdAt DateTime  @default(now())           // The timestamp when the link was created.
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)             // Links this link to a specific user.
+  userId    String?                                                                  // The ID of the user who created this link (a foreign key).
 }
