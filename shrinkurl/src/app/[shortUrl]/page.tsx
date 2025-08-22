@@ -1,10 +1,15 @@
-// src/app/[shortUrl]/page.tsx
-
 import { redirect } from 'next/navigation';
 import { getUrl } from '../../../db/queries';
 
-export default async function RedirectPage({ params }: { params: { shortUrl: string } }) {
-  const shortUrl = params.shortUrl;
+
+interface PageProps {
+  params: {
+    shortUrl: string;
+  };
+}
+
+export default async function RedirectPage({ params }: PageProps) {
+  const { shortUrl } = params;
 
   const longUrl = await getUrl(shortUrl);
 
