@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    // We find the user by their email in the database.
+    
     const user = await prisma.user.findUnique({
       where: {
         email: email
